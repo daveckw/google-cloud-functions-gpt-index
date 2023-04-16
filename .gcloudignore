@@ -1,0 +1,10 @@
+.gcloudignore
+.git
+.gitignore
+.env
+venv/
+chat.py
+demo.py
+demo2.py
+scripts.md
+

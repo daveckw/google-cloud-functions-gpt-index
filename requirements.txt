@@ -1,0 +1,9 @@
+llama_index==0.5.15
+langchain
+python-dotenv
+Flask==2.2.3
+gunicorn==20.1.0
+transformers
+firebase_admin
+bs4
+fake_useragent

@@ -7,6 +7,7 @@ from index_docs_fn import index_docs
 # Get the value of OPENAI_API_KEY from the environment
 api_key = os.getenv("OPENAI_API_KEY")
 storage_url = os.getenv("FIREBASE_STORAGE_BUCKET_URL")
+access_key = os.getenv("ACCESS_KEY")
 # Use the API key in your code
 os.environ["OPENAI_API_KEY"] = api_key
 
@@ -33,7 +34,7 @@ def index_documents(request):
 
     input_text = request.args.get("input_text", "")
     try:
-        if input_text == "eliteone123":
+        if input_text == access_key:
             # Fetch documents with indexed == false
             docs_ref = db.collection("documents")
             query = docs_ref.where("indexed", "==", False)

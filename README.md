@@ -1,4 +1,4 @@
-# Document Indexing Service
+# Document Indexing Service using ChatGPT 3.5 Turbo
 
 This service is designed to index documents using the GPT-3.5-turbo model from OpenAI. It fetches documents from a Firebase Firestore database and performs indexing using the `llama_index` library. The indexed data is then stored in a Firebase Storage bucket.
 
@@ -21,7 +21,7 @@ This file contains the Flask server code and the `index_documents` function. It 
 
 This file contains the `index_docs` function, which is responsible for indexing the documents. It uses the `llama_index` library to create a GPTSimpleVectorIndex and indexes the documents using the GPT-3.5-turbo model. The BeautifulSoupWebReader is used to read the documents, which are then inserted into the GPTSimpleVectorIndex. The resulting index is saved in a Firebase Storage bucket.
 
-## Setup
+### Setup
 
 1. Install the required libraries:
 
@@ -38,18 +38,17 @@ bs4
 fake_useragent
 ```
 
-## Google Cloud Function
-# Start google cloud functions
+### Google Cloud Function
 
 `gcloud auth login`
 `gcloud config set project your-firebase-project-id`
 
-# Deploy to Google Cloud Function using command line below
+### Deploy to Google Cloud Function using command line below
 
 `gcloud functions deploy index_documents --runtime python310 --trigger-http --allow-unauthenticated --entry-point index_documents --source . --env-vars-file .env.yaml --memory 1024MB --region asia-southeast1`
 `
 
-# Environment Variables
+### Environment Variables
 `.env.yaml` in your main directory (remember to .gitignore it)
 ```
 OPENAI_API_KEY: your openai key  

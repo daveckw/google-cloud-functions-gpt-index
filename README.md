@@ -1,4 +1,5 @@
 # Document Indexing Service using ChatGPT 3.5 Turbo
+## Running on Google Cloud Functions
 
 This service is designed to index documents using the GPT-3.5-turbo model from OpenAI. It fetches documents from a Firebase Firestore database and performs indexing using the `llama_index` library. The indexed data is then stored in a Firebase Storage bucket.
 

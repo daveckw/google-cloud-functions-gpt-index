@@ -1,6 +1,7 @@
 from langchain.agents import Tool
 from langchain.chat_models import ChatOpenAI
 from langchain.agents import initialize_agent, AgentType
+from langchain.memory import ConversationBufferMemory
 from dotenv import load_dotenv
 import os.path
 from llama_index import (
@@ -61,12 +62,16 @@ def chatbot_fn(input_text):
             ),
         ]
 
+        memory = ConversationBufferMemory(
+            memory_key="chat_history", return_messages=True
+        )
         llm = ChatOpenAI(temperature=0.2, model_name="gpt-3.5-turbo")
         agent = initialize_agent(
             tools,
             llm,
-            agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+            agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
             verbose=True,
+            memory=memory,
         )
 
         response = agent.run(input_text)

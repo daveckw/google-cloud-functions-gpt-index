@@ -4,7 +4,6 @@
 .env
 venv/
 chat.py
-demo.py
-demo2.py
+demo/
 scripts.md
 index.json

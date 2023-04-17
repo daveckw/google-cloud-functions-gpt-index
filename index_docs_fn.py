@@ -7,6 +7,11 @@ from llama_index import (
 from llama_index.readers import BeautifulSoupWebReader
 from langchain.chat_models import ChatOpenAI
 from firebase_admin import storage
+import os
+from firebase_utils import db
+
+storage_url = os.getenv("FIREBASE_STORAGE_BUCKET_URL")
+docs_ref = db.collection("documents")
 
 
 def index_docs(files):
@@ -24,7 +29,7 @@ def index_docs(files):
 
         llm_predictor = LLMPredictor(
             llm=ChatOpenAI(
-                temperature=0.7, model_name="gpt-3.5-turbo", max_tokens=num_outputs
+                temperature=0.3, model_name="gpt-3.5-turbo", max_tokens=num_outputs
             )
         )
 
@@ -47,7 +52,7 @@ def index_docs(files):
 
     try:
         # Download the index.json file from Firebase Storage
-        bucket = storage.bucket(name="whatsapp-api-eea64.appspot.com")
+        bucket = storage.bucket(name=storage_url)
         blob = bucket.blob("gptIndices/index.json")
 
         # Check if the file exists in Firebase Storage
@@ -58,7 +63,18 @@ def index_docs(files):
             )
 
             for doc in documents:
+                doc_id = doc.get_doc_id()
+                extra_info = doc.extra_info
+                url = extra_info["URL"]
+
                 index.insert(doc, service_context=service_context)
+
+                for file in files:
+                    if file["url"] == url:
+                        document_id = file["id"]
+                        doc_ref = docs_ref.document(document_id)
+                        doc_ref.update({"doc_id": doc_id, "indexed": True})
+                        break
 
         else:
             print("File does not exist in Firebase Storage")
@@ -67,6 +83,18 @@ def index_docs(files):
             index = GPTSimpleVectorIndex.from_documents(
                 documents, service_context=service_context
             )
+
+            for doc in documents:
+                doc_id = doc.get_doc_id()
+                extra_info = doc.extra_info
+                url = extra_info["URL"]
+
+                for file in files:
+                    if file["url"] == url:
+                        document_id = file["id"]
+                        doc_ref = docs_ref.document(document_id)
+                        doc_ref.update({"doc_id": doc_id, "indexed": True})
+                        break
 
             # Serialize the index to a JSON string
             index_json_data = index.save_to_string()

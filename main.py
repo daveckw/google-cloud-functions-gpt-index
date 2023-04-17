@@ -1,19 +1,13 @@
 import os
 from flask import jsonify, make_response
-import firebase_admin
-from firebase_admin import firestore
 from index_docs_fn import index_docs
+from firebase_utils import db
 
 # Get the value of OPENAI_API_KEY from the environment
 api_key = os.getenv("OPENAI_API_KEY")
-storage_url = os.getenv("FIREBASE_STORAGE_BUCKET_URL")
 access_key = os.getenv("ACCESS_KEY")
 # Use the API key in your code
 os.environ["OPENAI_API_KEY"] = api_key
-
-FIREBASE_STORAGE_BUCKET_URL = "whatsapp-api-eea64.appspot.com"
-firebase_admin.initialize_app(options={"storageBucket": FIREBASE_STORAGE_BUCKET_URL})
-db = firestore.client()
 
 
 def index_documents(request):

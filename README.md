@@ -27,7 +27,7 @@ This file contains the `index_docs` function, which is responsible for indexing 
 1. Install the required libraries:
 
 `requirements.txt` as follows:
-```bash
+```
 llama_index==0.5.15
 langchain
 python-dotenv
@@ -56,3 +56,7 @@ OPENAI_API_KEY: your openai key
 FIREBASE_STORAGE_BUCKET_URL: storage bucket  
 ACCESS_KEY: your access key
 ```
+
+### .gcloudignore
+It is very important to include below into the Google Cloud Ignore file.  
+If not the uncompressed file size will be too big to be uploaded to Google.

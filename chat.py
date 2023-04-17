@@ -55,8 +55,9 @@ tools = [
         func=lambda q: str(
             index.query(q, optimizer=SentenceEmbeddingOptimizer(percentile_cutoff=0.5))
         ),
-        description="useful for when you want to answer questions about projects and information from the documents. "
-                    "Input to this should be tell me about or summarise something",
+        description="useful for when you want to answer questions about projects "
+        "and information from the documents. "
+        "Input to this should be tell me about or summarise something",
         return_direct=True,  # return the direct response (observation) from the tool
     ),
 ]

@@ -2,11 +2,10 @@ import os
 from flask import jsonify, make_response
 from index_docs_fn import index_docs
 from firebase_utils import db
+from chatbot_fn import chatbot_fn
 
-# Get the value of OPENAI_API_KEY from the environment
 api_key = os.getenv("OPENAI_API_KEY")
 access_key = os.getenv("ACCESS_KEY")
-# Use the API key in your code
 os.environ["OPENAI_API_KEY"] = api_key
 
 
@@ -34,9 +33,43 @@ def index_documents(request):
             query = docs_ref.where("indexed", "==", False)
             results = query.stream()
             documents = [{"id": doc.id, **doc.to_dict()} for doc in results]
+
             index_docs(documents)
 
             return make_response(jsonify({"documents": documents}), 200, headers)
+        else:
+            response = "Please provide a valid input text"
+            return make_response(
+                jsonify({"response": response}),
+                400,
+                headers,
+            )
+    except KeyError as e:
+        print(f"KeyError encountered: {e} {input_text}")
+        response = "An error occurred. Please try again later."
+    return make_response(
+        jsonify({"response": response}),
+        500,  # Change this status code to 500 to indicate a server-side error
+        headers,
+    )
+
+
+def chatbot(request):
+    if request.method == "OPTIONS":
+        headers = {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET",
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Max-Age": "3600",
+        }
+        return "", 204, headers
+    headers = {"Access-Control-Allow-Origin": "*"}
+
+    input_text = request.args.get("input_text", "")
+    try:
+        if input_text:
+            response = chatbot_fn(input_text)
+            return make_response(jsonify({"response": response}), 200, headers)
         else:
             response = "Please provide a valid input text"
             return make_response(

@@ -7,3 +7,5 @@ chat.py
 demo/
 scripts.md
 index.json
+demo.py
+tmp/

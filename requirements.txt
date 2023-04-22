@@ -1,4 +1,4 @@
-llama_index==0.5.15
+llama_index==0.5.21
 langchain
 python-dotenv
 Flask==2.2.3
@@ -7,3 +7,5 @@ transformers
 firebase_admin
 bs4
 fake_useragent
+requests
+PyPDF2

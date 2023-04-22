@@ -4,3 +4,5 @@ scripts.md
 demo/
 venv/
 index.json
+tmp/
+demo.py

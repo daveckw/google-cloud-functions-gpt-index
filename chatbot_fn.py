@@ -17,7 +17,7 @@ api_key = os.getenv("OPENAI_API_KEY")
 os.environ["OPENAI_API_KEY"] = api_key
 
 
-def chatbot_fn(input_text):
+def chatbot_fn(input_text, index_name="index.json"):
     # Defining the parameters for the index
     max_input_size = 4096
     num_outputs = 1024
@@ -41,42 +41,45 @@ def chatbot_fn(input_text):
 
     try:
         # Download the index.json file from Firebase Storage
-        blob = bucket.blob("gptIndices/index.json")
+        blob = bucket.blob(f"gptIndices/{index_name}")
         index_json_data = blob.download_as_text()
 
         index = GPTSimpleVectorIndex.load_from_string(
             index_json_data, service_context=service_context
         )
-        print("index.json has been loaded successfully.")
+        print(f"{index_name} has been loaded successfully.")
 
         # Optimiser reduced time and token usage
         # Tools for langchain agent
-        tools = [
-            Tool(
-                name="Custom GPT Index",
-                func=lambda q: str(index.query(q)),
-                description="useful for when you want to answer questions about projects "
-                "and information from the documents. "
-                "Input to this should be tell me about or summarise something",
-                return_direct=True,  # return the direct response (observation) from the tool
-            ),
-        ]
+        # tools = [
+        #     Tool(
+        #         name="Custom GPT Index",
+        #         func=lambda q: str(index.query(q)),
+        #         description="useful for when you want to answer questions about projects "
+        #         "and information from the documents. "
+        #         "Input to this should be tell me about or summarise something",
+        #         return_direct=True,  # return the direct response (observation) from the tool
+        #     ),
+        # ]
 
-        memory = ConversationBufferMemory(
-            memory_key="chat_history", return_messages=True
-        )
-        llm = ChatOpenAI(temperature=0.2, model_name="gpt-3.5-turbo")
-        agent = initialize_agent(
-            tools,
-            llm,
-            agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
-            verbose=True,
-            memory=memory,
-        )
+        # memory = ConversationBufferMemory(
+        #     memory_key="chat_history", return_messages=True
+        # )
 
-        response = agent.run(input_text)
+        # llm = ChatOpenAI(temperature=0.4, model_name="gpt-3.5-turbo")
 
-        return response
+        # agent = initialize_agent(
+        #     tools,
+        #     llm,
+        #     agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
+        #     verbose=True,
+        #     memory=memory,
+        # )
+
+        response = index.query(input_text, service_context=service_context)
+        print("response: ", response.response)
+
+        return response.response
 
     except Exception as e:
         print("Error loading index.json:", e)
